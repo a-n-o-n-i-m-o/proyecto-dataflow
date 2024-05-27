@@ -8,7 +8,7 @@ pipeline {
                 script {
                     sh 'pwd'
                 sh 'ls'
-                sh 'gcloud init'
+                sh 'gcloud --help'
                 }
             }
         }
