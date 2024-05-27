@@ -10,7 +10,7 @@ pipeline {
             steps {
                 script {
                     // Verificar si gcloud está instalado en la ubicación esperada
-                    def gcloudInstalled = fileExists("${GCLOUD_SDK_PATH}/bin/gcloud")
+                    def gcloudInstalled = fileExists("${GCLOUD_SDK_PATH}/bin/")
 
                     if (!gcloudInstalled) {
                         error "¡gcloud no está instalado en la ubicación esperada!"
