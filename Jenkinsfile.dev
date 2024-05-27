@@ -1,22 +1,14 @@
 pipeline {
     agent any
 
-    environment {
-        GCLOUD_SDK_PATH = '/root/google-cloud-sdk'
-    }
 
     stages {
         stage('Configurar gcloud') {
             steps {
                 script {
-                    // Verificar si gcloud está instalado en la ubicación esperada
 
-                    // Asegurarse de que gcloud es ejecutable
-                    sh "chmod +x ${GCLOUD_SDK_PATH}/bin/gcloud"
-
-                    // Asegurarse de que gcloud esté en el PATH y ejecutar gcloud en el mismo bloque de shell
                     sh """
-                    sudo ${GCLOUD_SDK_PATH}/bin/gcloud --help
+                     sudo /root/google-cloud-sdk/bin/gcloud init
                     """
 
                 }
