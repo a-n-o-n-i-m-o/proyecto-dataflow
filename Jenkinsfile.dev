@@ -1,17 +1,21 @@
 pipeline {
     agent any
-          
 
-    stages{
+    environment {
+        GCLOUD_SDK_PATH = '/root/google-cloud-sdk'
+    }
+
+    stages {
         stage('Configurar gcloud') {
             steps {
                 script {
-                    sh 'pwd'
-                sh 'ls'
-                sh 'gcloud --help'
+                    // Asegurarse de que gcloud esté en el PATH
+                    sh "export PATH=\$PATH:${GCLOUD_SDK_PATH}/bin"
+
+                    // Iniciar sesión con gcloud
+                    sh "gcloud --help"
                 }
             }
         }
-
     }
 }
