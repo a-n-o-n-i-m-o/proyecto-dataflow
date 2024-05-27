@@ -59,13 +59,13 @@ pipeline {
                     sh """
                     ls 
                     pwd
-                    sudo ${GCLOUD_PATH} dataflow flex-template build gs://${BUCKET_NAME}/getting_started-py.json \
-                        --image-gcr-path "${imageGcrPath}" \
-                        --sdk-language "PYTHON" \
-                        --flex-template-base-image "gcr.io/dataflow-templates-base/python3-template-launcher-base" \
-                        --metadata-file "src/metadata.json" \
-                        --env "FLEX_TEMPLATE_PYTHON_PY_FILE=src/pipeline_4.py" \
-                        --env "FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE=src/requirements.txt"
+                    sudo /root/google-cloud-sdk/bin/gcloud dataflow flex-template build gs://my-bucket202424/getting_started-py.json \
+                    --image-gcr-path us-central1-docker.pkg.dev/devioz-pe-desa-analitica/my-repositorio202424/getting-started-python:latest \
+                    --sdk-language PYTHON \
+                    --flex-template-base-image gcr.io/dataflow-templates-base/python3-template-launcher-base \
+                    --metadata-file src/metadata.json \
+                    --py-path=src/pipeline_4.py \
+                    --env FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE=src/requirements.txt
                     """
                 }
             }
