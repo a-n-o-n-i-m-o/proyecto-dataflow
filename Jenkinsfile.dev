@@ -71,9 +71,12 @@ pipeline {
         stage('Ejecutar Plantilla Flex') {
             steps {
                 script {
+                    
                     def timestamp = sh(script: 'date +%Y%m%d-%H%M%S', returnStdout: true).trim()
                     def templateFile = "gs://${BUCKET_NAME}/getting_started-py.json"
                     sh """
+                    ls
+                    pwd
                     sudo ${GCLOUD_PATH} dataflow flex-template run "getting-started-${timestamp}" \
                         --template-file-gcs-location "${templateFile}" \
                         --parameters output="gs://${BUCKET_NAME}/output-${timestamp}" \
