@@ -6,7 +6,7 @@ pipeline {
         stage('Configurar gcloud') {
             steps {
                 script {
-                sh 'gcloud init'
+                sh 'ls'
                 }
             }
         }
