@@ -6,6 +6,17 @@ pipeline {
     }
 
     stages {
+
+        stage('Descarga de Fuentes') {
+            steps {
+                script {
+                    deleteDir()
+                    checkout scm
+                       sh "gcloud --help"
+                }
+            }
+        }
+
         stage('Configurar gcloud') {
             steps {
                 script {
