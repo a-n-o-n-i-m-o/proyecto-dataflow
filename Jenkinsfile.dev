@@ -1,6 +1,8 @@
 pipeline {
     agent any
+          
 
+    stages{
         stage('Configurar gcloud') {
             steps {
                 script {
@@ -10,4 +12,4 @@ pipeline {
         }
 
     }
-
+}
