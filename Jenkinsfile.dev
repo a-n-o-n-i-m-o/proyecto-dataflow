@@ -1,17 +1,17 @@
 pipeline {
     agent any
- 
+
     environment {
         PROJECT_ID = 'devioz-pe-desa-analitica'
         SRC_PATH = 'src'
         ENVIRONMENT = 'dev'
         GCP_SERVICE_ACCOUNT = 'devioz-pe-desa-analitica-gcp'
         GCP_LOCATION = 'us-central1'
-        REPOSITORY = 'my-repositorio202424'  
-        BUCKET_NAME = 'my-bucket202424' 
-        REGION = 'us-central1'  
+        REPOSITORY = 'my-repositorio202424'
+        BUCKET_NAME = 'my-bucket202424'
+        REGION = 'us-central1'
     }
-   
+
     stages {
         stage('Descarga de Fuentes') {
             steps {
@@ -21,13 +21,13 @@ pipeline {
                 }
             }
         }
- 
-        stage('Crear Repositorio') {
+
+        stage('Configurar gcloud') {
             steps {
-                sh '''
-                gcloud init 
-                '''
+                sh 'gcloud init'
             }
         }
+
+        // Agrega etapas adicionales según sea necesario
     }
 }
