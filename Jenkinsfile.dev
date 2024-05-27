@@ -16,9 +16,9 @@ pipeline {
 
                     // Asegurarse de que gcloud esté en el PATH y ejecutar gcloud en el mismo bloque de shell
                     sh """
-                    export PATH=\$PATH:${GCLOUD_SDK_PATH}/bin
-                    gcloud --help
+                    sudo ${GCLOUD_SDK_PATH}/bin/gcloud --help
                     """
+
                 }
             }
         }
