@@ -81,7 +81,9 @@ pipeline {
                     sudo ${GCLOUD_PATH} dataflow flex-template run "getting-started-${timestamp}" \
                         --template-file-gcs-location "${templateFile}" \
                         --parameters output="gs://${BUCKET_NAME}/output-" \
-                        --region "${REGION}" 
+                        --region "${REGION}" \
+                        --service-account-email "devioz-pe-desa-analitica-277@devioz-pe-desa-analitica.iam.gserviceaccount.com" \
+                        --network "notebook-network"
                     """
                 }
             }
