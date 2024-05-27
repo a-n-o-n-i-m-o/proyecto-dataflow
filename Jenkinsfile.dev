@@ -7,9 +7,10 @@ pipeline {
         ENVIRONMENT = 'dev'
         GCP_SERVICE_ACCOUNT = 'devioz-pe-desa-analitica-gcp'
         GCP_LOCATION = 'us-central1'
-        REPOSITORY = 'my-repositorio202424' 
-        BUCKET_NAME = 'my-bucket202424'  
-        REGION = 'us-central1' 
+        REPOSITORY = 'my-repositorio202424'
+        BUCKET_NAME = 'my-bucket202424'
+        REGION = 'us-central1'
+        GCLOUD_PATH = '/root/google-cloud-sdk/bin/gcloud'
     }
 
     stages {
@@ -25,26 +26,28 @@ pipeline {
         stage('Activando Service Account') {
             steps {
                 withCredentials([file(credentialsId: "${GCP_SERVICE_ACCOUNT}", variable: 'SECRET_FILE')]) {
-                    sh """\$(gcloud auth activate-service-account --key-file=\$SECRET_FILE)"""
+                    sh "sudo ${GCLOUD_PATH} auth activate-service-account --key-file=\$SECRET_FILE"
                 }
             }
         }
 
         stage('Crear Repositorio') {
             steps {
-                sh '''
-                gcloud artifacts repositories create ${REPOSITORY} \
-                    --repository-format=docker \
-                    --location=${GCP_LOCATION} || true
-                '''
+                script {
+                    sh """
+                    if ! sudo ${GCLOUD_PATH} artifacts repositories describe ${REPOSITORY} --location=${GCP_LOCATION}; then
+                        sudo ${GCLOUD_PATH} artifacts repositories create ${REPOSITORY} \
+                            --repository-format=docker \
+                            --location=${GCP_LOCATION}
+                    fi
+                    """
+                }
             }
         }
 
         stage('Configurar Autenticación Docker') {
             steps {
-                sh '''
-                gcloud auth configure-docker ${GCP_LOCATION}-docker.pkg.dev
-                '''
+                sh "sudo ${GCLOUD_PATH} auth configure-docker ${GCP_LOCATION}-docker.pkg.dev"
             }
         }
 
@@ -53,14 +56,15 @@ pipeline {
                 script {
                     def imageGcrPath = "${GCP_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/getting-started-python:latest"
                     sh """
-                    gcloud dataflow flex-template build gs://${BUCKET_NAME}/getting_started-py.json \
+                    sudo ${GCLOUD_PATH} dataflow flex-template build gs://${BUCKET_NAME}/getting_started-py.json \
                         --image-gcr-path "${imageGcrPath}" \
                         --sdk-language "PYTHON" \
                         --flex-template-base-image "PYTHON3" \
                         --metadata-file "${SRC_PATH}/metadata.json" \
-                        --py-path "." \
+                        --python-command "python3" \
+                        --python-version "3.8" \
                         --env "FLEX_TEMPLATE_PYTHON_PY_FILE=${SRC_PATH}/pipeline_4.py" \
-                        --env "FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE=${SRC_PATH}/requirements.txt" \
+                        --env "FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE=${SRC_PATH}/requirements.txt"
                     """
                 }
             }
@@ -72,11 +76,11 @@ pipeline {
                     def timestamp = sh(script: 'date +%Y%m%d-%H%M%S', returnStdout: true).trim()
                     def templateFile = "gs://${BUCKET_NAME}/getting_started-py.json"
                     sh """
-                    gcloud dataflow flex-template run "getting-started-${timestamp}" \
+                    sudo ${GCLOUD_PATH} dataflow flex-template run "getting-started-${timestamp}" \
                         --template-file-gcs-location "${templateFile}" \
-                        --parameters output="gs://${BUCKET_NAME}/output-" \
-                        --region "${REGION}"
-                        --service-acount-email "devioz-pe-desa-analitica-277@devioz-pe-desa-analitica.iam.gserviceaccount.com"
+                        --parameters output="gs://${BUCKET_NAME}/output-${timestamp}" \
+                        --region "${REGION}" \
+                        --service-account-email "devioz-pe-desa-analitica-277@devioz-pe-desa-analitica.iam.gserviceaccount.com" \
                         --network "notebook-network"
                     """
                 }
